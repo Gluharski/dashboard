@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
-
 import Match from '../match/Match';
 
 function Matches() {
-	const url = 'https://api.football-data.org/v2/matches';
-	// const [matches, setMatches] = useState([
-	// 	{id: 1, teams: 'Spartak - Levksi', result: '1-0'},
-	// 	{id: 2, teams: 'Botev - Lokomotiv', result: '3-3'},
-	// 	{id: 3, teams: 'Maritsa - Etar', result: '2-1'}
-	// ]);
-
 	const [matches, setMatches] = useState([]);
+	const url = 'https://api.football-data.org/v2/matches';
+	
+	let allMatches = {};
 
 	useEffect(() => {
 		fetch(url, {
@@ -20,30 +15,56 @@ function Matches() {
 			}
 		})
 		.then(response => response.json())
-		.then(data => {
-			setMatches(data.matches)
+		.then(database => {
+			const data = database.matches;
+			// console.log(data);
+
+			data.forEach(element => {
+				if(!allMatches[element.competition.name]) {
+					allMatches[element.competition.name] = [];
+				}	
+
+				allMatches[element.competition.name].push({
+					id: element.id,
+					flag: element.competition.area.ensignUrl,
+					home: element.homeTeam.name,
+					away: element.awayTeam.name,
+					status: element.status,
+					date: element.date
+				})
+			})
+			setMatches(allMatches);
 		})
 		.catch(err => console.log(err));
 	}, []);
-	
-	console.log(matches)
 
 	return(
 		<section>
 			<section className='section-title'>
-				<h3>Today matches count: {matches.length} </h3>
+				<h3>Today matches count: {matches.length}</h3>
+				{console.log(Object.values(matches).length)}
 			</section>
 
-				{matches.map(x => 
-					 <Match 
-						flag={x.competition.area.ensignUrl}
-						status={x.status} 
-						league={x.competition.name} 
-						homeTeam={x.homeTeam.name} 
-						awayTeam={x.awayTeam.name}
-						date={x.utcDate}
-					/> )}
-				
+			{Object.entries(matches).map(([league, matches]) => {
+				const countries = [];
+
+				return matches.map(x => {
+					const condition = countries.includes(x.flag);
+
+					if(!condition) {
+						countries.push(x.flag)
+					}
+				 	
+					return <Match
+						flag={condition ? '' : x.flag}
+						id={x.id}
+						homeTeam={x.home}
+						awayTeam={x.away}
+						status={x.status}
+						date={x.date}
+					/>
+				})}
+			)}
 		</section>
 	)
 }

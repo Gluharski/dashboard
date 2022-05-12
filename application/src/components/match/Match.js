@@ -1,27 +1,37 @@
+import { useState, useEffect} from 'react';
 import '../../App.css';
+import Details from '../details/Details';
 
-function Match({ flag, league, homeTeam, awayTeam, status, date }) {
-	
-	// TODO: Think about dinamic class when statuses are diffrent	
-	// TODO: calculate current date
+function Match({ flag, league, homeTeam, awayTeam, status, date, id }) {
+	const [view, setView] = useState(false);
+	const URL = `http://api.football-data.org/v2/matches/${id}`;
+
+	function handleClick() {
+			fetch(URL, {
+				method: 'get',
+				headers: {
+					'X-Auth-Token': '3a780b3c15f348258961995b7774e006'
+				}
+			})
+			.then(res => res.json())
+			.then(database => {
+				console.log(database);
+			})
+			.catch(err => console.log(err));
+	};
 
 	return(
-		<article className="match-card">
-			<header>
-				<div>
-					<img src={flag} style={{width: '25px', height: '25px'}} alt="flag" />
-				</div>
-				<div>
-					{league}
-				</div>
-			</header>
+		<>
+			{flag ? <img src={flag} style={{width: '25px', height: '25px'}} alt="flag" /> : null}
 
-			<main>
-				<div className='playing'>
-					{homeTeam} - {awayTeam}
-				</div>
-			</main>
-		</article>
+			<article onClick={handleClick} className="match-card">
+				<main>
+					<div className='playing'>
+					{date} - {status} - {homeTeam} - {awayTeam}
+					</div>
+				</main>
+			</article>
+		</>
 	)
 }
 

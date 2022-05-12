@@ -1,19 +1,15 @@
-import Navbar from './components/navbar/Navbar';
 import {Routes, Route} from 'react-router-dom';
-
+import Details from './components/details/Details';
 import Matches from './components/match-list/Matches';
-
 import './App.css';
 
 function App() {
   return (
     <section className='site-wrapper'>
-      <Navbar />
-
-    <Routes>
-      <Route path='/live-matches' element={<Matches />} />
-    </Routes>
-
+      <Routes>
+        <Route path='/live-matches' element={<Matches />} />
+        <Route path='/live-matches/:id' element={<Details />} />
+      </Routes>
     </section>
   );
 }
