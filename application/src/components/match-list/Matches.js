@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import Match from '../match/Match';
 
 function Matches() {
@@ -17,7 +18,7 @@ function Matches() {
 		.then(response => response.json())
 		.then(database => {
 			const data = database.matches;
-			// console.log(data);
+			console.log(data);
 
 			data.forEach(element => {
 				if(!allMatches[element.competition.name]) {
